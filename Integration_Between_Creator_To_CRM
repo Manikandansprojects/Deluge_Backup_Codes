@@ -1,0 +1,20 @@
+// 1. Prepare the CRM Map
+// The keys on the left must be the 'API Names' from Zoho CRM
+crmData = Map();
+crmData.put("First_Name",input.Name.first_name);
+crmData.put("Last_Name",input.Name.last_name);
+crmData.put("Email",input.Email);
+crmData.put("Phone",input.Phone_Number);
+crmData.put("Company",input.Company_Name);
+value = input.Company_Website;
+value = value.getSuffix("href= ");
+value = value.getPrefix(" target");
+cleanURL = value.replaceAll("\"","");
+crmData.put("Website",cleanURL);
+crmData.put("Description",input.How_Can_We_Serve_You);
+crmData.put("Lead_Source","Course Enrollment in Zeducator");
+// 2. Push to CRM Leads or Contacts module
+// No connection name is required if you are the admin of both apps
+response = zoho.crm.createRecord("Leads",crmData);
+// 3. Debugging (Optional)
+// info response;

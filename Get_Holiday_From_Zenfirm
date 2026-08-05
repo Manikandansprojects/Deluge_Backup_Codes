@@ -1,0 +1,23 @@
+list Get_Holiday_From_Zenfirm()
+{
+	// 1. Fetch the records from the "Office_Holiday__List" form
+	holidayResponse = zoho.creator.getRecords("zentegraindia","zenfirm","Office_Holiday__List","",1,500,"zoho_oauth_connection");
+	holidayList = List();
+	// 2. Check if the response code is 3000 (Success)
+	if(holidayResponse.get("code") == 3000)
+	{
+		// 3. Access the "data" key, which contains the array of records
+		dataList = holidayResponse.get("data");
+		// 4. Iterate through the records
+		for each  record in dataList
+		{
+			// 5. Create a map and add it to your return list
+			holidayEntry = Map();
+			holidayEntry.put("holiday_name",record.get("Event_Name"));
+			holidayEntry.put("holiday_date",record.get("Date_field"));
+			holidayList.add(holidayEntry);
+		}
+	}
+	// 6. Return the list populated with holiday maps
+	return holidayList;
+}

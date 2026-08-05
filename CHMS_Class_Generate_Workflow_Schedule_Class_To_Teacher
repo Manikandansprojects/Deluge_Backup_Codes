@@ -1,0 +1,252 @@
+startDate = input.Class_Start_Date.toDate();
+endDate = input.Class_End_Date.toDate();
+get_day = input.Class_Start_Date.getDayOfWeek();
+totalDays = startDate.daysBetween(endDate);
+day = input.Class_Held_On_Every_These_Day;
+if(input.Class_Held_On_Every_These_Day == "Sunday")
+{
+	daynum = 1;
+}
+else if(input.Class_Held_On_Every_These_Day == "Monday")
+{
+	daynum = 2;
+}
+else if(input.Class_Held_On_Every_These_Day == "Tuesday")
+{
+	daynum = 3;
+}
+else if(input.Class_Held_On_Every_These_Day == "Wednesday")
+{
+	daynum = 4;
+}
+else if(input.Class_Held_On_Every_These_Day == "Thursday")
+{
+	daynum = 5;
+}
+else if(input.Class_Held_On_Every_These_Day == "Friday")
+{
+	daynum = 6;
+}
+else if(input.Class_Held_On_Every_These_Day == "Saturday")
+{
+	daynum = 7;
+}
+targetDay = daynum;
+count = 0;
+dummyText = "".leftpad(totalDays + 1);
+dummyList = dummyText.toList("");
+dayIndex = 0;
+for each  item in dummyList
+{
+	currentDate = startDate.addDay(dayIndex);
+	if(currentDate.getDayOfWeek() == targetDay)
+	{
+		count = count + 1;
+	}
+	dayIndex = dayIndex + 1;
+}
+//count 
+info "Total occurrences: " + count;
+countFinal = count - 2;
+placeolderstring = leftpad(" ",countFinal);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+info "List: " + dlist;
+info "countfinal: " + count;
+class_date = input.Class_Start_Date;
+feature_date = List();
+runningDate = input.Class_Start_Date;
+if(input.Class_Held_On == "Weekly")
+{
+	for each  final in dlist
+	{
+		info "final: " + final;
+		runningDate = runningDate.nextWeekDay(day);
+		feature_date.add(runningDate);
+		add_rec = insert into Schedule_Class_To_Teacher
+		[
+			Added_User=zoho.loginuser
+			Select_Grade=input.Select_Grade
+			Select_Academic_Year=input.Select_Academic_Year
+			Select_Teacher=input.Select_Teacher
+			Class_Start_Time=input.Class_Start_Time
+			Class_End_Time=input.Class_End_Time
+			Class_Held_On=input.Class_Held_On
+			Class_Start_Date=runningDate
+			Class_End_Date=input.Class_End_Date
+			Class_Held_On_Every_These_Day=input.Class_Held_On_Every_These_Day
+			Status = "New"
+		];
+	}
+}
+//for monthly we can generate 
+startDate = input.Class_Start_Date.toDate();
+endDate = input.Class_End_Date.toDate();
+totalMonths = startDate.monthsDiff(endDate);
+countFinal = if(totalMonths > 0,totalMonths,1);
+placeolderstring = leftpad(" ",countFinal);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+// Map day name to day number (1: Sun, 2: Mon, 3: Tue, 4: Wed, 5: Thu, 6: Fri, 7: Sat)
+dayName = input.Class_Held_On_Every_These_Day;
+targetDay = 1;
+if(dayName == "Sunday")
+{
+	targetDay = 1;
+}
+else if(dayName == "Monday")
+{
+	targetDay = 2;
+}
+else if(dayName == "Tuesday")
+{
+	targetDay = 3;
+}
+else if(dayName == "Wednesday")
+{
+	targetDay = 4;
+}
+else if(dayName == "Thursday")
+{
+	targetDay = 5;
+}
+else if(dayName == "Friday")
+{
+	targetDay = 6;
+}
+else if(dayName == "Saturday")
+{
+	targetDay = 7;
+}
+feature_date = List();
+weekDaysList = {0,1,2,3,4,5,6};
+runningDate = startDate;
+if(input.Class_Held_On == "Monthly")
+{
+	for each  final in dlist
+	{
+		// Construct the 1st day of the current running month safely as a string and parse it to a date
+		firstDayOfMonth = ("" + runningDate.getYear() + "-" + runningDate.getMonth() + "-01").toDate();
+		// Find the first occurrence of the target weekday in this month using a for each loop
+		firstOccurrence = null;
+		for each  offset in weekDaysList
+		{
+			checkDate = firstDayOfMonth.addDay(offset);
+			if(checkDate.getMonth() == firstDayOfMonth.getMonth() && checkDate.getDayOfWeek() == targetDay && firstOccurrence == null)
+			{
+				firstOccurrence = checkDate;
+			}
+		}
+		// Ensure the calculated date falls within your selected start and end date range
+		if(firstOccurrence != null && firstOccurrence >= startDate && firstOccurrence <= endDate)
+		{
+			feature_date.add(firstOccurrence);
+			add_rec = insert into Schedule_Class_To_Teacher
+			[
+				Added_User=zoho.loginuser
+				Select_Grade=input.Select_Grade
+				Select_Academic_Year=input.Select_Academic_Year
+				Select_Teacher=input.Select_Teacher
+				Class_Start_Time=input.Class_Start_Time
+				Class_End_Time=input.Class_End_Time
+				Class_Held_On=input.Class_Held_On
+				Class_Start_Date=firstOccurrence
+				Class_End_Date=input.Class_End_Date
+				Class_Held_On_Every_These_Day=input.Class_Held_On_Every_These_Day
+				Status="New"
+			];
+		}
+		// Move runningDate forward by 1 month for the next iteration
+		runningDate = runningDate.addMonth(1);
+	}
+}
+info "Feature Dates: " + feature_date;
+//For yearly class generate code 
+startDate = input.Class_Start_Date.toDate();
+endDate = input.Class_End_Date.toDate();
+// Map day name to day number (1: Sun, 2: Mon, 3: Tue, 4: Wed, 5: Thu, 6: Fri, 7: Sat)
+dayName = input.Class_Held_On_Every_These_Day;
+targetDay = 1;
+if(dayName == "Sunday")
+{
+	targetDay = 1;
+}
+else if(dayName == "Monday")
+{
+	targetDay = 2;
+}
+else if(dayName == "Tuesday")
+{
+	targetDay = 3;
+}
+else if(dayName == "Wednesday")
+{
+	targetDay = 4;
+}
+else if(dayName == "Thursday")
+{
+	targetDay = 5;
+}
+else if(dayName == "Friday")
+{
+	targetDay = 6;
+}
+else if(dayName == "Saturday")
+{
+	targetDay = 7;
+}
+feature_date = List();
+weekDaysList = {0,1,2,3,4,5,6};
+runningDate = startDate;
+// Determine loop count based on frequency choice
+loopCount = 1;
+if(input.Class_Held_On == "Monthly")
+{
+	totalMonths = startDate.monthsDiff(endDate);
+	loopCount = if(totalMonths > 0,totalMonths,1);
+}
+else if(input.Class_Held_On == "Yearly")
+{
+	// Default to 12 months for yearly choice
+	loopCount = 10;
+}
+placeolderstring = leftpad(" ",loopCount);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+if(input.Class_Held_On == "Monthly" || input.Class_Held_On == "Yearly")
+{
+	for each  final in dlist
+	{
+		// Construct the 1st day of the current running month safely as a string and parse it to a date
+		firstDayOfMonth = ("" + runningDate.getYear() + "-" + runningDate.getMonth() + "-01").toDate();
+		// Find the first occurrence of the target weekday in this month using a for each loop
+		firstOccurrence = null;
+		for each  offset in weekDaysList
+		{
+			checkDate = firstDayOfMonth.addDay(offset);
+			if(checkDate.getMonth() == firstDayOfMonth.getMonth() && checkDate.getDayOfWeek() == targetDay && firstOccurrence == null)
+			{
+				firstOccurrence = checkDate;
+			}
+		}
+		// For monthly, validate against endDate. For yearly, 12 months are generated automatically.
+		if(firstOccurrence != null && input.Class_Held_On == "Yearly" || (firstOccurrence >= startDate && firstOccurrence <= endDate))
+		{
+			feature_date.add(firstOccurrence);
+			add_rec = insert into Schedule_Class_To_Teacher
+			[
+				Added_User=zoho.loginuser
+				Select_Grade=input.Select_Grade
+				Select_Academic_Year=input.Select_Academic_Year
+				Select_Teacher=input.Select_Teacher
+				Class_Start_Time=input.Class_Start_Time
+				Class_End_Time=input.Class_End_Time
+				Class_Held_On=input.Class_Held_On
+				Class_Start_Date=firstOccurrence
+				Class_End_Date=input.Class_End_Date
+				Class_Held_On_Every_These_Day=input.Class_Held_On_Every_These_Day
+				Status="New"
+			];
+		}
+		// Move runningDate forward by 1 month for the next iteration
+		runningDate = runningDate.addMonth(1);
+	}
+}
+info "Feature Dates: " + feature_date;

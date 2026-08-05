@@ -1,0 +1,28 @@
+if(input.Select_Academic_Year != null && input.Select_Grade != null)
+{
+	// Clear existing rows first to prevent duplication
+	input.Student_Attendance.clear();
+	// Fetch all students matching the selected academic year and grade
+	students = Add_Student[Academic_Year.Academic_Year == input.Select_Academic_Year.Academic_Year && Grade.Grade_name == input.Select_Grade.Grade_name];
+	if(students.count() > 0)
+	{
+		// Declare a variable to hold the collection of rows
+		rowsCollection = Collection();
+		for each  student in students
+		{
+			// Declare the row using the correct form and subform link names
+			row1 = Schedule_Class_To_Teacher.Student_Attendance();
+			// Assign values for subform fields
+			row1.Student_Name=student.ID;
+			// Add the row to the collection
+			rowsCollection.insert(row1);
+		}
+		// Insert all rows into the subform
+		input.Student_Attendance.insert(rowsCollection);
+	}
+}
+else if(input.Select_Academic_Year == null || input.Select_Grade == null)
+{
+	// Clears the subform if either Academic Year or Grade is deselected/empty
+	input.Student_Attendance.clear();
+}

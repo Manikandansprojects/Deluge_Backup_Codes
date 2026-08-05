@@ -1,0 +1,3 @@
+currentDate = '25-Aug-2026';
+date_d = currentDate.getDay();
+info date_d;

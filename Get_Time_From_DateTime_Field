@@ -1,0 +1,5 @@
+void testing.te()
+{
+	datetime = '30-Jun-2026 13:20:17';
+	info datetime.getTime(12,true);
+}

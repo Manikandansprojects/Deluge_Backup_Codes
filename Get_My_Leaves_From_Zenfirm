@@ -1,0 +1,80 @@
+void testing.test()
+{
+	//     // 1. Fetch the data (assuming this returns the JSON provided)
+	//     leaveResponse = zoho.creator.getRecords("zentegraindia", "zenfirm", "My_Leaves", "", 1, 500, "zoho_oauth_connection");
+	//     // 2. Get the list of records from the "data" key
+	//     dataList = leaveResponse.get("data");
+	//     // 3. Loop through each record
+	//     for each leaveRecord in dataList
+	//     {
+	//         // 4. Access the Employee_Name map, then get the "display_value"
+	//         empMap = leaveRecord.get("Employee_Name");
+	//         empName = empMap.get("display_value");
+	//         // 5. Output the result
+	//         info "Employee Name: " + empName;
+	//     }
+	leaveResponse = zoho.creator.getRecords("zentegraindia","zenfirm","My_Leaves","",1,500,"zoho_oauth_connection");
+	leaveList = List();
+	if(leaveResponse.get("code") == 3000)
+	{
+		dataList = leaveResponse.get("data");
+		for each  record in dataList
+		{
+			employeeName = record.get("Employee_Name").get("display_value");
+			employeeId = record.get("Employee_Name").get("ID");
+			leaveRecordId = record.get("ID");
+			approvalStatus = record.get("Approval_status");
+			comments = record.get("Comments");
+			noOfDays = record.get("No_Of_Days_Leave");
+			// Get Leave Days Details subform
+			leaveDaysDetails = record.get("Leave_Days_Details");
+			for each  dayDetail in leaveDaysDetails
+			{
+				displayValue = dayDetail.get("display_value");
+				dayDetailId = dayDetail.get("ID");
+				// Parse display_value (e.g., "Sick Leave 06-25-2026 Full Day")
+				parts = displayValue.toList(" ");
+				// Extract leave type (first part(s) before date)
+				// Extract date and day type
+				leaveTypeFromDetail = "";
+				leaveDateFromDetail = "";
+				dayType = "";
+				// Find the date pattern (MM-DD-YYYY)
+				for each  part in parts
+				{
+					if(part.contains("-") && part.length() == 10)
+					{
+						leaveDateFromDetail = part;
+					}
+				}
+				// Get day type (Full Day, First Half, Second Half)
+				if(displayValue.contains("Full Day"))
+				{
+					dayType = "Full Day";
+				}
+				else if(displayValue.contains("First Half"))
+				{
+					dayType = "First Half";
+				}
+				else if(displayValue.contains("Second Half"))
+				{
+					dayType = "Second Half";
+				}
+				// Extract leave type (everything before the date)
+				leaveTypeFromDetail = displayValue.getPrefix(leaveDateFromDetail).trim();
+				leaveEntry = Map();
+				leaveEntry.put("employee_name",employeeName);
+				leaveEntry.put("employee_id",employeeId);
+				leaveEntry.put("leave_type",leaveTypeFromDetail);
+				leaveEntry.put("leave_date",leaveDateFromDetail);
+				leaveEntry.put("day_type",dayType);
+				leaveEntry.put("leave_record_id",leaveRecordId);
+				leaveEntry.put("day_detail_id",dayDetailId);
+				leaveEntry.put("approval_status",approvalStatus);
+				leaveEntry.put("comments",comments);
+				leaveList.add(leaveEntry);
+			}
+		}
+	}
+	info leaveList;
+}

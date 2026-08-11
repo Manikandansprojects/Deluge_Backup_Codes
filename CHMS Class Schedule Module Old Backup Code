@@ -1,0 +1,213 @@
+startDate = input.Start_Date.toDate();
+endDate = input.End_Date.toDate();
+get_day = input.Start_Date.getDayOfWeek();
+totalDays = startDate.daysBetween(endDate);
+day = input.Held_On_Every_These_Day;
+if(input.Held_On_Every_These_Day == "Sunday")
+{
+	daynum = 1;
+}
+else if(input.Held_On_Every_These_Day == "Monday")
+{
+	daynum = 2;
+}
+else if(input.Held_On_Every_These_Day == "Tuesday")
+{
+	daynum = 3;
+}
+else if(input.Held_On_Every_These_Day == "Wednesday")
+{
+	daynum = 4;
+}
+else if(input.Held_On_Every_These_Day == "Thursday")
+{
+	daynum = 5;
+}
+else if(input.Held_On_Every_These_Day == "Friday")
+{
+	daynum = 6;
+}
+else if(input.Held_On_Every_These_Day == "Saturday")
+{
+	daynum = 7;
+}
+targetDay = daynum;
+count = 0;
+dummyText = "".leftpad(totalDays + 1);
+dummyList = dummyText.toList("");
+dayIndex = 0;
+for each  item in dummyList
+{
+	currentDate = startDate.addDay(dayIndex);
+	if(currentDate.getDayOfWeek() == targetDay)
+	{
+		count = count + 1;
+	}
+	dayIndex = dayIndex + 1;
+}
+countFinal = count - 3;
+placeolderstring = leftpad(" ",countFinal);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+// info "List: " + dlist;
+// info "countfinal: " + count;
+class_date = input.Start_Date;
+feature_date = List();
+runningDate = input.Start_Date;
+if(input.Held_On_Every_These_Day == "Weekly")
+{
+	for each  final in dlist
+	{
+		// 		info "final: " + final;
+		runningDate = runningDate.nextWeekDay(day);
+		feature_date.add(runningDate);
+		rowsCollection = Collection();
+		
+		add_rec = insert into Class_Schedule
+		[
+			Added_User=zoho.loginuser
+			Grade=input.Grade
+			Academic_Year=input.Academic_Year
+			Teacher=input.Teacher
+			Start_Date=input.Start_Date
+			End_Date=input.End_Date
+			Schedule_Type=input.Schedule_Type
+			Held_On_Every_These_Day=input.Held_On_Every_These_Day
+			Status="New"
+		];
+	}
+}
+startDate = input.Start_Date.toDate();
+endDate = input.End_Date.toDate();
+totalMonths = startDate.monthsDiff(endDate);
+countFinal = if(totalMonths > 0,totalMonths,1);
+placeolderstring = leftpad(" ",countFinal);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+dayName = input.Held_On_Every_These_Day;
+targetDay = 1;
+if(dayName == "Sunday")
+{
+	targetDay = 1;
+}
+else if(dayName == "Monday")
+{
+	targetDay = 2;
+}
+else if(dayName == "Tuesday")
+{
+	targetDay = 3;
+}
+else if(dayName == "Wednesday")
+{
+	targetDay = 4;
+}
+else if(dayName == "Thursday")
+{
+	targetDay = 5;
+}
+else if(dayName == "Friday")
+{
+	targetDay = 6;
+}
+else if(dayName == "Saturday")
+{
+	targetDay = 7;
+}
+feature_date = List();
+weekDaysList = {0,1,2,3,4,5,6};
+runningDate = startDate;
+if(input.Schedule_Type == "Monthly")
+{
+	for each  final in dlist
+	{
+		firstDayOfMonth = ("" + runningDate.getYear() + "-" + runningDate.getMonth() + "-01").toDate();
+		firstOccurrence = null;
+		for each  offset in weekDaysList
+		{
+			checkDate = firstDayOfMonth.addDay(offset);
+			if(checkDate.getMonth() == firstDayOfMonth.getMonth() && checkDate.getDayOfWeek() == targetDay && firstOccurrence == null)
+			{
+				firstOccurrence = checkDate;
+			}
+		}
+		if(firstOccurrence != null && firstOccurrence >= startDate && firstOccurrence <= endDate)
+		{
+			feature_date.add(firstOccurrence);
+			rowsCollection = Collection();
+			add_rec = insert into Class_Schedule
+			[
+				Added_User=zoho.loginuser
+				Grade=input.Grade
+				Academic_Year=input.Academic_Year
+				Teacher=input.Teacher
+				Held_On_Every_These_Day=input.Held_On_Every_These_Day
+				End_Date=input.End_Date
+				Status="New"
+			];
+		}
+		runningDate = runningDate.addMonth(1);
+	}
+}
+// info "Feature Dates: " + feature_date;
+startDate = input.Start_Date.toDate();
+endDate = input.End_Date.toDate();
+dayName = input.Held_On_Every_These_Day;
+targetDay = 1;
+if(dayName == "Sunday")
+{
+	targetDay = 1;
+}
+else if(dayName == "Monday")
+{
+	targetDay = 2;
+}
+else if(dayName == "Tuesday")
+{
+	targetDay = 3;
+}
+else if(dayName == "Wednesday")
+{
+	targetDay = 4;
+}
+else if(dayName == "Thursday")
+{
+	targetDay = 5;
+}
+else if(dayName == "Friday")
+{
+	targetDay = 6;
+}
+else if(dayName == "Saturday")
+{
+	targetDay = 7;
+}
+feature_date = List();
+weekDaysList = {0,1,2,3,4,5,6};
+runningDate = startDate;
+loopCount = 1;
+placeolderstring = leftpad(" ",loopCount);
+dlist = placeolderstring.replaceAll("",",").toList(",");
+if(input.Schedule_Type == "Yearly")
+{
+	for each  final in dlist
+	{
+		if(firstOccurrence != null)
+		{
+			feature_date.add(firstOccurrence);
+			rowsCollection = Collection();
+			add_rec = insert into Class_Schedule
+			[
+				Added_User=zoho.loginuser
+				Grade=input.Grade
+				Academic_Year=input.Academic_Year
+				Teacher=input.Teacher
+				Held_On_Every_These_Day=input.Held_On_Every_These_Day
+				Start_Date=firstOccurrence
+				End_Date=input.End_Date
+				Held_On_Every_These_Day=input.Held_On_Every_These_Day
+				Status="New"
+			];
+		}
+		runningDate = runningDate.addMonth(1);
+	}
+}
+// info "Feature Dates: " + feature_date;

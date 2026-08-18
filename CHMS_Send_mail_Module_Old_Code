@@ -1,0 +1,37 @@
+//code for an validation on form submission and this code and methodology is correct but not paste this code in validation on form submission and You can insert this code in after form submission
+
+temp_type = Email_Template_Type[ID == input.Template_Type];
+if(input.Academic_Year != null && input.Grade != null && input.Student_Name == null && input.Template_Type == temp_type.ID)
+{
+	stud_email = List();
+	for each  mail in Student_Academic_Enrollment[Academic_Year.Academic_Year == input.Academic_Year.Academic_Year && Grade.Grade == input.Grade.Grade]
+	{
+		stud_email.add(mail.Student_Name.Email);
+	}
+	info "mail sent to many Students.";
+	info stud_email;
+	email_template_type = temp_type.Template.replaceAll("$_message",input.Message);
+	sendmail
+	[
+		from :zoho.loginuserid
+		to :stud_email
+		bcc :stud_email
+		subject :input.Subject_field
+		message :email_template_type
+	]
+}
+else if(input.Student_Name != null)
+{
+	stud_mail = Members_Form[First_Name == input.Student_Name.Student_Name.First_Name];
+	sendmail
+	[
+		from :zoho.loginuserid
+		to :stud_mail.Email
+		bcc :stud_email
+		subject :input.Subject_field
+		message :input.Message
+	]
+	info "mail sent to only one student";
+	info "single stud mail id : " + stud_mail.Email;
+}
+info "Success !";

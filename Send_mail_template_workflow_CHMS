@@ -1,0 +1,73 @@
+Temp_type = Email_Template_Type[ID != null];
+if(input.Student_Name == null)
+{
+	stud_email_list = Student_Academic_Enrollment[Academic_Year == input.Academic_Year && Grade == input.Grade].Student_Name.Email.getAll();
+	if(input.Template_Type.Type_field == Temp_type.Type_field)
+	{
+		sendmail
+		[
+			from :zoho.adminuserid
+			to :stud_email_list
+			subject :input.Subject_field
+			message :input.Template_Type.Template.replaceAll("$_message",input.Message,true)
+		]
+		info "students mails : " + stud_email_list; 
+	}
+// 	thisapp.Send_Mail(stud_email_list,input.Subject_field,input.Message,input.Academic_Year,input.Grade,input.Student_Name);
+}
+else
+{
+	mem_form = Members_Form[First_Name == input.Select_Student_Name.First_Name];
+	stud_email = Student_Academic_Enrollment[Academic_Year == input.Academic_Year && Grade == input.Grade && Student_Name.First_Name == input.Select_Student_Name.First_Name];
+	email = stud_email.Student_Name.Email;
+	if(input.Template_Type.Type_field == Temp_type.Type_field)
+	{
+		sendmail
+		[
+			from :zoho.adminuserid
+			to :email
+			subject :input.Subject_field
+			message :input.Template_Type.Template.replaceAll("$_message",input.Message,true)
+		]
+		info "Stud email : " + email;
+	}
+}
+
+// temp_type = Email_Template_Type[ID == input.Template_Type];
+// if(input.Academic_Year != null && input.Grade != null && input.Student_Name == null && input.Template_Type == temp_type.ID)
+// {
+// 	stud_email = List();
+// 	for each  mail in Student_Academic_Enrollment[Academic_Year.Academic_Year == input.Academic_Year.Academic_Year && Grade.Grade == input.Grade.Grade]
+// 	{
+// 		stud_email.add(mail.Student_Name.Email);
+// 	}
+// 	info "mail sent to many Students.";
+// 	info stud_email;
+// 	temp_type = Email_Template_Type[Type_field == input.Template_Type.Type_field];
+// 	mess = input.Message;
+// 	tem = temp_type.Template.replaceAll("$_message",mess);
+// 	sendmail
+// 	[
+// 		from :zoho.loginuserid
+// 		to :stud_email
+// 		bcc :stud_email
+// 		subject :input.Subject_field
+// 		message :tem
+// 	]
+// 	info "Code :" + tem;
+// }
+// else if(input.Student_Name != null)
+// {
+// 	stud_mail = Members_Form[First_Name == input.Student_Name.Student_Name.First_Name];
+// 	sendmail
+// 	[
+// 		from :zoho.loginuserid
+// 		to :stud_mail.Email
+// 		bcc :stud_email
+// 		subject :input.Subject_field
+// 		message :input.Message
+// 	]
+// 	info "mail sent to only one student";
+// 	info "single stud mail id : " + stud_mail.Email;
+// }
+// info "Success !";

@@ -1,0 +1,40 @@
+map get_employee_details(string email_search)
+{
+	res_map = Map();
+	if(email_search == "ALL")
+	{
+		all_emps = Employee[ID != null];
+		if(all_emps.count() > 0)
+		{
+			res_map.put("All_IDs",all_emps.ID.getall());
+			res_map.put("Status","Success");
+		}
+	}
+	else
+	{
+		emp_rec = Employee[Email == email_search || ID == email_search.toLong()];
+		if(emp_rec.count() > 0)
+		{
+			res_map = emp_rec.toMap();
+			// Extract Display Names for Text Fields
+			if(emp_rec.Organization != null)
+			{
+				res_map.put("Organization_Name",emp_rec.Organization.Organization_Name);
+			}
+			if(emp_rec.Department != null)
+			{
+				res_map.put("Department_Name",emp_rec.Department.Department_Name);
+			}
+			if(emp_rec.Role != null)
+			{
+				res_map.put("Role_Name",emp_rec.Role.Role);
+			}
+			res_map.put("Status","Success");
+		}
+		else
+		{
+			res_map.put("Status","Not Found");
+		}
+	}
+	return res_map;
+}

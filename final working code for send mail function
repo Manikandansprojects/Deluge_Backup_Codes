@@ -1,0 +1,60 @@
+Final working code 
+
+
+void Send_Mails.send_mail(int academic_year, int grade, list student_email_ids, int student_name, string mail_sub, string mail_message, int template_id)
+{
+	temp_rec = Email_Template_Type[ID == template_id];
+	template_code = temp_rec.Template;
+	stud_email_list = Student_Academic_Enrollment[Academic_Year == academic_year && Grade == grade].Student_Name.Email.getAll();
+	
+	if(student_name != null)
+	{
+		info "1 Yes";
+		student_rec = Student_Academic_Enrollment[ID == student_name];
+		
+		if(student_rec.ID != null)
+		{
+			info "1 Mail yes";
+			
+			first_name = student_rec.Student_Name.First_Name;
+			email = student_rec.Student_Name.Email;
+			
+			formatted_template = template_code.replaceAll("Student", first_name, false).replaceAll("$_message", mail_message, true);
+			
+			sendmail
+			[
+				from : zoho.adminuserid
+				to : email 
+				subject : mail_sub
+				message : formatted_template
+			]
+			info "Mail sent to single student: " + email;
+		}
+	}
+	// 3. Case 2: Send to Multiple Students
+	else if(academic_year != null && grade != null)
+	{
+		info "2 yes";
+		// Use passed email list or fetch automatically if list is empty
+		final_email_list = student_email_ids;
+		
+		if(final_email_list.size() > 0)
+		{
+			info "2 mail yes";
+			
+			// Replace message placeholder
+			formatted_template = template_code.replaceAll("$_message", mail_message, true);
+			
+			sendmail
+			[
+				from : zoho.adminuserid
+				to : final_email_list
+				bcc : final_email_list
+				subject : mail_sub
+				message : formatted_template
+			]
+			info "Mail sent to many students: " + final_email_list;
+		}
+	}
+	info "mail lists : " + final_email_list;
+}

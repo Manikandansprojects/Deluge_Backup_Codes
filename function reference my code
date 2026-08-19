@@ -1,0 +1,26 @@
+# My code 
+if(input.Email_Type == "Class")
+{
+	stud_email_list = Student_Academic_Enrollment[Academic_Year == input.Academic_Year && Grade == input.Grade].Student_Name.Email.getAll();
+	sendmail
+	[
+		from :zoho.adminuserid
+		to :stud_email_list
+		subject :input.Subject_field
+		message :input.Template_Type.Template.replaceAll("$_message",input.Message,true)
+	]
+	// 	thisapp.Send_Mail(stud_email_list,input.Subject_field,input.Message,input.Academic_Year,input.Grade,input.Student_Name);
+}
+else
+{
+	if(input.Student_Name != null)
+	{
+		sendmail
+		[
+			from :zoho.adminuserid
+			to :input.Student_Name.Student_Name.Email
+			subject :input.Subject_field
+			message :input.Template_Type.Template.replaceAll("Student",input.Student_Name.Student_Name1,true).replaceAll("$_message",input.Message,true)
+		]
+	}
+}

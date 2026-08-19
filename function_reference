@@ -1,0 +1,19 @@
+Working function
+
+string Status_Updates()
+{
+	updatedCount = 0;
+	for each item in Class_Schedule[ID != null]
+	{
+		if(item.End_Date.getTime() == zoho.currenttime.getTime() && item.Start_Date.toDate() == zoho.currentdate)
+		{
+			item.Status = "Completed";
+			updatedCount = updatedCount + 1;
+		}
+		else
+		{
+			item.Status = "New";
+		}
+	}
+	return "Successfully updated " + updatedCount + " record(s).";
+}

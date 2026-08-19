@@ -1,0 +1,39 @@
+Temp_type = Email_Template_Type[ID != null];
+if(input.Email_Type == "Class")
+{
+	stud_email_list = Student_Academic_Enrollment[Academic_Year == input.Academic_Year && Grade == input.Grade].Student_Name.Email.getAll();
+	for each template_type in Email_Template_Type [ ID == input.Template_Type ]
+    {
+		if(template_type == input.Template_Type)
+		{
+			sendmail
+			[
+				from :zoho.adminuserid
+				to :stud_email_list
+				subject :input.Subject_field
+				message :input.template_type.Template.replaceAll("$_message",input.Message,true)
+			]
+			info "students mails : " + stud_email_list;
+		}
+    } 
+	
+	// 	thisapp.Send_Mail(stud_email_list,input.Subject_field,input.Message,input.Academic_Year,input.Grade,input.Student_Name);
+}
+else
+{
+	stud_email = Student_Academic_Enrollment[Academic_Year == input.Academic_Year && Grade == input.Grade && Student_Name.First_Name == input.Student_Name.Student_Name.First_Name];
+	email = stud_email.Student_Name.Email;
+	stud_name = input.Student_Name.Student_Name.First_Name;
+	if(input.Template_Type.Type_field == Temp_type.Type_field)
+	{
+		sendmail
+		[
+			from :zoho.adminuserid
+			to :email
+			subject :input.Subject_field
+			message :input.Template_Type.Template.replaceAll("Student",stud_name,true).replaceAll("$_message",input.Message,true)
+		]
+		info "Stud email : " + email;
+		info "Stud Name : " + stud_name;
+	}
+}
